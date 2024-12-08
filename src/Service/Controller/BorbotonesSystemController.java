@@ -13,6 +13,7 @@ public class BorbotonesSystemController {
     private int port;
     private TextComparatorService service = new TextComparatorService();
     private TextReader textReader = new TextReader();
+    int clientCount = 0;
 
     public BorbotonesSystemController(int port) {
         this.port = port;
@@ -26,22 +27,31 @@ public class BorbotonesSystemController {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected.");
 
-                try (SocketHandler socketHandler = new SocketHandler(clientSocket)) {
-                    String originalPath = socketHandler.listen();
-                    String copyPath = socketHandler.listen();
-                    System.out.println("Received paths: " + originalPath + " and " + copyPath);
-
-                    String originalContent = textReader.readTextFromFile(originalPath);
-                    String copyContent = textReader.readTextFromFile(copyPath);
-
-                    TextComparatorModel result = service.compare(originalContent, copyContent);
-
-                    socketHandler.writeObject(result);
-                    System.out.println("Result sent to client.");
-                }
+                Thread clientHandler = new Thread(() -> handleClient(clientSocket));
+                clientHandler.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleClient(Socket clientSocket) {
+        try (SocketHandler socketHandler = new SocketHandler(clientSocket)) {
+
+            String originalPath = socketHandler.listen();
+            String copyPath = socketHandler.listen();
+            System.out.println("Received paths: " + originalPath + " and " + copyPath);
+
+            String originalContent = textReader.readTextFromFile(originalPath);
+            String copyContent = textReader.readTextFromFile(copyPath);
+
+            TextComparatorModel result = service.compare(originalContent, copyContent);
+
+            socketHandler.writeObject(result);
+            System.out.println("Result sent to client:" + clientCount);
+            clientCount++;
+        } catch (IOException e) {
+            System.err.println("Error handling client: " + e.getMessage());
         }
     }
 }
