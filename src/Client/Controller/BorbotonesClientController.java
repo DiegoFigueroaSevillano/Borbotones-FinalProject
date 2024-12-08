@@ -14,12 +14,9 @@ public class BorbotonesClientController {
         this.port = port;
     }
 
-    public void run() {
+    public void run(String originalPath, String copyPath) {
         try (SocketHandler socketHandler = new SocketHandler(host, port)) {
             System.out.println("Connected to server.");
-
-            String originalPath = "C:\\Users\\diego\\IdeaProjects\\BorbotonesGroup-Project\\Assets\\Texts\\original.txt";
-            String copyPath = "C:\\Users\\diego\\IdeaProjects\\BorbotonesGroup-Project\\Assets\\Texts\\copy.txt";
 
             socketHandler.send(originalPath);
             socketHandler.send(copyPath);
