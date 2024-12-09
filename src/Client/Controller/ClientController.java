@@ -1,5 +1,6 @@
 package Client.Controller;
 
+import Client.Model.ResultStore;
 import Client.SocketManagement.SocketHandler;
 import Client.View.ClientView;
 import Server.Model.TextComparatorModel;
@@ -10,12 +11,13 @@ public class ClientController {
     private final String host;
     private final int port;
     public final ClientView view;
-    private TextComparatorModel model;
+    private final ResultStore resultStore;
 
     public ClientController(String host, int port) {
         this.host = host;
         this.port = port;
         this.view = new ClientView();
+        this.resultStore = new ResultStore();
     }
 
     public void run() {
@@ -31,17 +33,24 @@ public class ClientController {
             continueRunning = askUserToContinue();
         }
 
-        view.showExitMessage();
+        generateSummaryAndExit();
     }
 
     private void handleFileComparison(SocketHandler socketHandler) throws IOException, ClassNotFoundException {
         String originalTextPath = view.originalTextRequestMessage();
         String compareTextPath = view.compareTextRequestMessage();
 
-        sendPathsToServer(socketHandler, originalTextPath, compareTextPath);
-        model = receiveResultsFromServer(socketHandler);
+        long startTime = System.currentTimeMillis();
 
-        showResults();
+        sendPathsToServer(socketHandler, originalTextPath, compareTextPath);
+        TextComparatorModel model = receiveResultsFromServer(socketHandler);
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        resultStore.addResult("Comparison Task", model, duration);
+
+        showResults(model);
     }
 
     private void sendPathsToServer(SocketHandler socketHandler, String originalPath, String comparePath) {
@@ -57,7 +66,7 @@ public class ClientController {
         return (TextComparatorModel) socketHandler.readObject();
     }
 
-    private void showResults() {
+    private void showResults(TextComparatorModel model) {
         view.percentageMessage(model.getPercentage());
         view.misspellingsMessage(model.getMisspellings());
     }
@@ -65,5 +74,10 @@ public class ClientController {
     private boolean askUserToContinue() {
         String userInput = view.askContinueMessage();
         return userInput.equalsIgnoreCase("yes");
+    }
+
+    private void generateSummaryAndExit() {
+        view.showSummary(resultStore);
+        view.showExitMessage();
     }
 }
