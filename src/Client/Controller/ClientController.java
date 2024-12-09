@@ -6,6 +6,8 @@ import Client.View.ClientView;
 import Server.Model.TextComparatorModel;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ClientController {
     private final String host;
@@ -78,6 +80,14 @@ public class ClientController {
 
     private void generateSummaryAndExit() {
         view.showSummary(resultStore);
+        saveSummaryToFile();
         view.showExitMessage();
+    }
+
+    private void saveSummaryToFile() {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+        String fileName = "Summary_" + timestamp + ".txt";
+        resultStore.generateSummary(fileName);
+        System.out.println("Summary saved to file: " + fileName);
     }
 }

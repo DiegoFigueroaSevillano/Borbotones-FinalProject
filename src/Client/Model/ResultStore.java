@@ -2,6 +2,9 @@ package Client.Model;
 
 import Server.Model.TextComparatorModel;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,27 +20,19 @@ public class ResultStore {
         return Collections.unmodifiableList(results);
     }
 
-    public static class ResultEntry {
-        private final String taskName;
-        private final TextComparatorModel result;
-        private final long duration;
-
-        public ResultEntry(String taskName, TextComparatorModel result, long duration) {
-            this.taskName = taskName;
-            this.result = result;
-            this.duration = duration;
-        }
-
-        public String getTaskName() {
-            return taskName;
-        }
-
-        public TextComparatorModel getResult() {
-            return result;
-        }
-
-        public long getDuration() {
-            return duration;
+    public synchronized void generateSummary(String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("Task Summary:\n");
+            writer.write("=============================\n");
+            for (ResultEntry entry : results) {
+                writer.write("Task: " + entry.getTaskName() + "\n");
+                writer.write("Percentage: " + entry.getResult().getPercentage() + "\n");
+                writer.write("Misspellings: " + entry.getResult().getMisspellings() + "\n");
+                writer.write("Duration: " + entry.getDuration() + "ms\n");
+                writer.write("-----------------------------\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing summary file: " + e.getMessage());
         }
     }
 }
