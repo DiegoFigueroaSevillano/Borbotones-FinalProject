@@ -32,8 +32,7 @@ public class ServerController {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected.");
 
-                Thread clientHandler = new Thread(() -> handleClient(clientSocket));
-                clientHandler.start();
+                threadPoolManager.submitTask(() -> handleClient(clientSocket));
             }
         } catch (IOException e) {
             e.printStackTrace();
