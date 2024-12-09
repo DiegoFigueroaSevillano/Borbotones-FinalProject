@@ -1,8 +1,8 @@
-package Service.Service;
+package Server.Service;
 
-import Service.Model.TextComparatorModel;
-import Service.Repository.TextComparatorRepository;
-import Service.Utils.StringUtils;
+import Server.Model.TextComparatorModel;
+import Server.Repository.TextComparatorRepository;
+import Server.Utils.StringUtils;
 
 import java.util.List;
 import java.util.Map;

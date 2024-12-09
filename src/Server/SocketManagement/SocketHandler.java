@@ -1,4 +1,4 @@
-package Service.SocketManagement;
+package Server.SocketManagement;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,4 +1,4 @@
-package Service.Utils;
+package Server.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

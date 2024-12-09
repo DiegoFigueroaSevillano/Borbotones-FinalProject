@@ -1,4 +1,4 @@
-package Service.Utils;
+package Server.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
