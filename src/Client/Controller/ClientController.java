@@ -42,6 +42,16 @@ public class ClientController {
         String originalTextPath = view.originalTextRequestMessage();
         String compareTextPath = view.compareTextRequestMessage();
 
+        if (originalTextPath == null || compareTextPath == null) {
+            view.showErrorMessage("File paths cannot be null. Task aborted.");
+            return;
+        }
+
+        if (originalTextPath.equals(compareTextPath)) {
+            view.showErrorMessage("Original file and comparison file cannot be the same. Task aborted.");
+            return;
+        }
+
         long startTime = System.currentTimeMillis();
 
         sendPathsToServer(socketHandler, originalTextPath, compareTextPath);
@@ -55,6 +65,7 @@ public class ClientController {
         showResults(model);
     }
 
+
     private void sendPathsToServer(SocketHandler socketHandler, String originalPath, String comparePath) {
         try {
             socketHandler.send(originalPath);
@@ -65,8 +76,17 @@ public class ClientController {
     }
 
     private TextComparatorModel receiveResultsFromServer(SocketHandler socketHandler) throws IOException, ClassNotFoundException {
-        return (TextComparatorModel) socketHandler.readObject();
+        Object obj = socketHandler.readObject();
+        if (obj == null || !(obj instanceof TextComparatorModel)) {
+            throw new IOException("Invalid response received from the server.");
+        }
+        TextComparatorModel model = (TextComparatorModel) obj;
+        if (model.getPercentage() < 0 || model.getPercentage() > 100) {
+            throw new IOException("Received invalid similarity percentage.");
+        }
+        return model;
     }
+
 
     private void showResults(TextComparatorModel model) {
         view.percentageMessage(model.getPercentage());

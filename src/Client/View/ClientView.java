@@ -24,7 +24,13 @@ public class ClientView {
 
             int result = fileChooser.showOpenDialog(null);
             if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
-                return fileChooser.getSelectedFile().getAbsolutePath();
+                java.io.File selectedFile = fileChooser.getSelectedFile();
+                if (selectedFile.exists() && selectedFile.isFile()) {
+                    return selectedFile.getAbsolutePath();
+                } else {
+                    showErrorMessage("Invalid file selected. Please select a valid text file.");
+                    return null;
+                }
             } else {
                 showNoFileSelectedMessage();
                 return null;
@@ -90,8 +96,14 @@ public class ClientView {
 
     private String getUserInput() {
         System.out.print("> ");
-        return new java.util.Scanner(System.in).nextLine();
+        String input = new java.util.Scanner(System.in).nextLine();
+        if (input == null || input.trim().isEmpty()) {
+            showErrorMessage("Input cannot be empty. Please try again.");
+            return getUserInput();
+        }
+        return input;
     }
+
 
     public void showSummary(ResultStore resultStore) {
         System.out.println("\nSummary of executed tasks:");

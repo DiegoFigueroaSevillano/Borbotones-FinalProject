@@ -18,6 +18,14 @@ public class TextComparatorService {
     }
 
     public TextComparatorModel compare(String originalText, String copyText) {
+        if (originalText == null || originalText.trim().isEmpty() || copyText == null || copyText.trim().isEmpty()) {
+            throw new IllegalArgumentException("Texts to compare cannot be null or empty.");
+        }
+
+        if (originalText.length() > 1_000_000 || copyText.length() > 1_000_000) {
+            throw new IllegalArgumentException("Texts exceed the maximum allowed size.");
+        }
+
         List<List<String>> originalOrations = stringUtils.split(originalText);
         List<List<String>> copyOrations = stringUtils.split(copyText);
 
@@ -27,5 +35,6 @@ public class TextComparatorService {
 
         return new TextComparatorModel(originalText, copyText, percent, misspellings);
     }
+
 
 }
