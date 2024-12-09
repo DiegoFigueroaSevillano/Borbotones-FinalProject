@@ -22,7 +22,7 @@ public class TextComparatorService {
             throw new IllegalArgumentException("Texts to compare cannot be null or empty.");
         }
 
-        if (originalText.length() > 1_000_000 || copyText.length() > 1_000_000) { // Ejemplo: límite de 1 MB por texto
+        if (originalText.length() > 1_000_000 || copyText.length() > 1_000_000) {
             throw new IllegalArgumentException("Texts exceed the maximum allowed size.");
         }
 

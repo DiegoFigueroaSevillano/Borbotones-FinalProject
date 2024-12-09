@@ -14,7 +14,7 @@ public class ThreadPoolManager {
             throw new IllegalArgumentException("Task cannot be null.");
         }
 
-        if (((ThreadPoolExecutor) executorService).getQueue().size() > 100) { // Límite ejemplo
+        if (((ThreadPoolExecutor) executorService).getQueue().size() > 100) {
             System.err.println("Task queue is full. Task rejected.");
             return;
         }
