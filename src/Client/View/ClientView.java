@@ -1,5 +1,7 @@
 package Client.View;
 
+import Client.Model.ResultStore;
+
 import java.util.List;
 
 public class ClientView {
@@ -89,5 +91,17 @@ public class ClientView {
     private String getUserInput() {
         System.out.print("> ");
         return new java.util.Scanner(System.in).nextLine();
+    }
+
+    public void showSummary(ResultStore resultStore) {
+        System.out.println("\nSummary of executed tasks:");
+        System.out.println("=============================");
+        resultStore.getResults().forEach(result -> {
+            System.out.println("Task: " + result.getTaskName());
+            System.out.println("Similarity Percentage: " + result.getResult().getPercentage() + "%");
+            System.out.println("Misspellings: " + result.getResult().getMisspellings());
+            System.out.println("Duration: " + result.getDuration() + " ms");
+            System.out.println("-----------------------------");
+        });
     }
 }
