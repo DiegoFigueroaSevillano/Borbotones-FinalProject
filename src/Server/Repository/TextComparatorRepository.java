@@ -1,6 +1,6 @@
-package Service.Repository;
+package Server.Repository;
 
-import Service.Algorithm.LCSAlgorithm;
+import Server.Algorithm.LCSAlgorithm;
 
 import java.util.*;
 

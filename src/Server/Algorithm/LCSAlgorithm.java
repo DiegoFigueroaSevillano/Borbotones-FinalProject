@@ -1,4 +1,4 @@
-package Service.Algorithm;
+package Server.Algorithm;
 
 import java.util.List;
 
